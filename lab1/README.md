@@ -20,3 +20,7 @@ into `Khoor Zruog!`
 ## [decrypt.py](decrypt.py)
 
 This script takes a ciphered message read in from the [secretMessage.txt](secretMessage.txt) file and brute forces the decryption. There are 26 possible keys ranging from 0 to 25, and the script runs the decryption using each key and writes the result to the [decrypted.txt](decrypted.txt) file. Simply open the file and look for the plaintext result written in plain English, which happens to be key 6 in this case.
+
+## [vigenere.py](vigenere.py)
+
+This script uses the Vigenere cipher method to encrypt and decrypt the sample text `TO BE OR NOT TO BE THAT IS THE QUESTION` with the provided key `RELATIONS`. The result is `KS BX CE ESE MW OW XSAM WF KLP JCSFLZSY` The script is modularized and the plaintext and key is modifiable. 
