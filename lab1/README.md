@@ -1,6 +1,6 @@
 # COE817-labs
 
-This lab explores simple ciphering.
+This lab explores simple ciphering. Details can be found in the [lab manual](Lab1_2021.pdf).
 
 ## [encrypt.py](encrypt.py)
 
