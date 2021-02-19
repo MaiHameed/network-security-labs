@@ -2,7 +2,7 @@ from des import DesKey
 import socket
 
 HOST = 'localhost'
-PORT = 9080
+PORT = 9080 
 BUFFER = 1024
 
 ida = b'INITIATOR A'
