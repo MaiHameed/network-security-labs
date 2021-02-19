@@ -1,0 +1,3 @@
+The [responder](responder.py) script is the `server` and should be run first. Do so by running the following command: `python3 responder.py`
+The [initiator](initiator.py) script is the `client` and should be run second as it will try to connect to the server automatically - both the client and server has their ports 
+hard-coded to connect to each other over `localhost`. Start the client by running the following command: `python3 initiator.py`.
