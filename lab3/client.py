@@ -4,7 +4,7 @@ import socket
 import os
 
 HOST = 'localhost'
-PORT = 9003
+PORT = 9004
 BUFFER = 1024
 
 # Client public key
@@ -16,12 +16,36 @@ Ks = b'sessionk'
 
 
 def sendToServer(s, Ks):
-    s.close()
-    exit()
+    # Generate session key
+    Ks = DesKey(Ks)
+
+    while(1):
+        # Get user text
+        userInput = input()
+
+        # Exit chat session
+        if(userInput == 'q'):
+            print("Terminating chat session")
+            s.close()
+            exit()
+        
+        # Print message to terminal for user visibility
+        print('You: '+userInput)
+        
+        # Try sending message to server
+        # Terminates chat session if TCP connection is severed
+        try:
+            encryptedMessage  = Ks.encrypt(bytes(userInput), padding=True)
+            s.sendall(encryptedMessage)
+        except:
+            s.close()
+            exit()
 
 
 
 def receiveFromServer(s, Ks):
+    while(1):
+        sleep(0.5)
     s.close()
     exit()
 

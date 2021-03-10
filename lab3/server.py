@@ -4,7 +4,7 @@ from des import DesKey
 from time import sleep
 
 HOST = 'localhost'
-PORT = 9003       
+PORT = 9004
 BUFFER = 1024
 
 
@@ -16,8 +16,25 @@ def sendToClient(conn, Ks):
 
 
 def receiveFromClient(conn, Ks):
-    conn.close()
-    exit()
+    Ks = DesKey(Ks)
+
+    while(1):
+        # Wait for incoming message
+        try:
+            receivedMessage = conn.recv(BUFFER)
+        except:
+            print("Chat session terminated by client")
+            conn.close()
+            exit()
+
+        # Terminate chat session if client terminated
+        if (not receivedMessage):
+            print("Chat session terminated by client")
+            conn.close()
+            exit()
+        
+        receivedMessage = Ks.decrypt(receivedMessage, padding=True)
+        print("Client: "+str(receivedMessage))
 
 
 
