@@ -2,56 +2,13 @@ import socket
 import select
 import sys
 import os
+from startChatSession import startChatSession # User created library
 from des import DesKey
 from time import sleep
 
 HOST = 'localhost'
-PORT = 9009
+PORT = 9000
 BUFFER = 1024
-
-
-
-def startChatSession(conn, Ks):
-    SOCKETS = [sys.stdin, conn]
-    Ks = DesKey(Ks)
-
-    while(1):
-        readyToRead, [], [] = select.select(SOCKETS, [], [], 0)
-        for sock in readyToRead:
-            # Message in stdin
-            if sock == sys.stdin:
-                # Read in message from user in stdin
-                # .rstrip removes trailing characters such as \n
-                message = sock.readline().rstrip()
-                
-                # Check if user wants to quit
-                if(message == 'q'):
-                    print("Terminating chat session")
-                    conn.close()
-                    exit()
-                
-                # Encrypt and send message to server
-                message = bytes(message,'utf-8')
-                message = Ks.encrypt(message, padding=True)
-                conn.sendall(message)
-
-            # Message from client
-            else:
-                try:
-                    receivedMessage = conn.recv(BUFFER)
-                except:
-                    print("Chat session terminated by client")
-                    conn.close()
-                    exit()
-
-                # Terminate chat session if client terminated
-                if (not receivedMessage):
-                    print("Chat session terminated by client")
-                    conn.close()
-                    exit()
-                
-                receivedMessage = Ks.decrypt(receivedMessage, padding=True)
-                print("Client: "+str(receivedMessage,'utf-8'))
 
 
 
@@ -141,7 +98,7 @@ def handleClient(conn):
     print(" ")
     print("Established secure channel, start chatting!")
     print("(Type 'q' at any time to quit)")
-    startChatSession(conn, Ks)
+    startChatSession(conn, Ks, 'client')
 
 
 
