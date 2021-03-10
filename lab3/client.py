@@ -1,10 +1,12 @@
 from des import DesKey
 from time import sleep
 import socket
+import select
+import sys
 import os
 
 HOST = 'localhost'
-PORT = 9004
+PORT = 9009
 BUFFER = 1024
 
 # Client public key
@@ -15,39 +17,47 @@ Ks = b'sessionk'
 
 
 
-def sendToServer(s, Ks):
-    # Generate session key
+def startChatSession(conn, Ks):
+    SOCKETS = [sys.stdin, conn]
     Ks = DesKey(Ks)
 
     while(1):
-        # Get user text
-        userInput = input()
+        readyToRead, [], [] = select.select(SOCKETS, [], [], 0)
+        for sock in readyToRead:
+            # Message in stdin
+            if sock == sys.stdin:
+                # Read in message from user in stdin
+                # .rstrip removes trailing characters such as \n
+                message = sock.readline().rstrip()
+                
+                # Check if user wants to quit
+                if(message == 'q'):
+                    print("Terminating chat session")
+                    conn.close()
+                    exit()
+                
+                # Encrypt and send message to server
+                message = bytes(message,'utf-8')
+                message = Ks.encrypt(message, padding=True)
+                conn.sendall(message)
+            
+            # Message from server
+            else:
+                try:
+                    receivedMessage = conn.recv(BUFFER)
+                except:
+                    print("Chat session terminated by server")
+                    conn.close()
+                    exit()
 
-        # Exit chat session
-        if(userInput == 'q'):
-            print("Terminating chat session")
-            s.close()
-            exit()
-        
-        # Print message to terminal for user visibility
-        print('You: '+userInput)
-        
-        # Try sending message to server
-        # Terminates chat session if TCP connection is severed
-        try:
-            encryptedMessage  = Ks.encrypt(bytes(userInput), padding=True)
-            s.sendall(encryptedMessage)
-        except:
-            s.close()
-            exit()
-
-
-
-def receiveFromServer(s, Ks):
-    while(1):
-        sleep(0.5)
-    s.close()
-    exit()
+                # Terminate chat session if server terminated
+                if (not receivedMessage):
+                    print("Chat session terminated by server")
+                    conn.close()
+                    exit()
+                
+                receivedMessage = Ks.decrypt(receivedMessage, padding=True)
+                print("Server: "+str(receivedMessage,'utf-8'))
 
 
 
@@ -114,10 +124,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print(" ")
     print("Established secure channel, start chatting!")
     print("(Type 'q' at any time to quit)")
-    if (os.fork() == 0):
-        sendToServer(s, Ks)
-    else:
-        receiveFromServer(s, Ks)
-    
-    s.close()
-    exit()
+    startChatSession(s, Ks)
