@@ -1,0 +1,3 @@
+# run pip install -r requirements.txt to automatically install necessary packages
+des
+Pillow

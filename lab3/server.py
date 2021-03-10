@@ -7,7 +7,7 @@ from des import DesKey
 from time import sleep
 
 HOST = 'localhost'
-PORT = 9000
+PORT = 9001
 BUFFER = 1024
 
 
@@ -95,9 +95,6 @@ def handleClient(conn):
     print("Decrypted message into:")
     print(Ks)
     
-    print(" ")
-    print("Established secure channel, start chatting!")
-    print("(Type 'q' at any time to quit)")
     startChatSession(conn, Ks, 'client')
 
 

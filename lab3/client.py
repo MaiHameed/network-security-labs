@@ -7,7 +7,7 @@ from des import DesKey
 from time import sleep
 
 HOST = 'localhost'
-PORT = 9000
+PORT = 9001
 BUFFER = 1024
 
 # Client public key
@@ -78,7 +78,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.sendall(serverPubKey.encrypt(n1, padding=True))
     s.sendall(serverPubKey.encrypt(Ks, padding=True))
 
-    print(" ")
-    print("Established secure channel, start chatting!")
-    print("(Type 'q' at any time to quit)")
     startChatSession(s, Ks, 'server')
